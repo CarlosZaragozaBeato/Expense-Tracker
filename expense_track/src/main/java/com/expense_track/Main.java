@@ -13,7 +13,7 @@ public class Main {
         // Users can add an expense with a description and amount.
         final String TEXT = "ENTER A COMMAND: \n-add:\nupdate-\ndelete\n-list\n-summary\n-summary(month)\n";
         boolean flag = true;
-        Scanner sc = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);  // Initialize the scanner once
 
         // Get the last ID from the JSON file or initialize to 0 if the file doesn't
         // exist
@@ -25,7 +25,7 @@ public class Main {
 
             if (command.length > 0) {
                 if (command[0].trim().equals("exit")) {
-                    flag = false;
+                    flag = false;  // Exit condition
                 } else {
                     if (command[0].trim().equals("add")) {
                         System.out.println("\n---ADD");
@@ -140,15 +140,20 @@ public class Main {
                         Matcher matcherMonth = patternMonth.matcher(commandsAsString);
                         if (matcherMonth.find()){
                             int total = Expense.getTotalByMonth(matcherMonth.group(1), PATH);
+                            System.out.println("The total of the " + matcherMonth.group(1) + " month is : "+ total);
                         }else{
                             int total = Expense.getTotal(PATH);
+                            System.out.println("The total is " + total);
+
                         }
 
                     }
                 }
-                flag = false;
             }
-            sc.close();
         }
+        
+        // Close the scanner after the loop exits, when you're done with user input
+        sc.close();
     }
 }
+ 
