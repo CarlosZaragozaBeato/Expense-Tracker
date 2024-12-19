@@ -1,13 +1,1 @@
-[ {
-  "description" : "DESCRIPTION",
-  "amount" : 1,
-  "path" : "/home/carlos/Desktop/expense_tracker/expense_track/src/main/resources/db/db.json",
-  "id" : 1,
-  "date" : [ 2024, 12, 19 ]
-}, {
-  "description" : "DESCRIPTION",
-  "amount" : 2,
-  "path" : "/home/carlos/Desktop/expense_tracker/expense_track/src/main/resources/db/db.json",
-  "id" : 2,
-  "date" : [ 2024, 12, 19 ]
-} ]
+[{"description":"DESCRIPTION","amount":2,"path":"/home/carlos/Desktop/expense_tracker/expense_track/src/main/resources/db/db.json","id":2,"date":[2024,12,19]}]

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -230,15 +231,48 @@ public class Expense {
         try {
             mapper.writerWithDefaultPrettyPrinter().writeValue(dbFile, expensesList);
         } catch (StreamWriteException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (DatabindException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
+    }
+
+    public static boolean deleteById(String path, int id) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule()); // Register the module for Java 8 date/time types
+
+        List<Expense> expensesList = new ArrayList<>();
+        
+        File dbFile = new File(path);
+        
+        if (dbFile.exists()) {
+            // Deserialize the file content into a list of Expense objects
+            try {
+                expensesList = mapper.readValue(dbFile, new TypeReference<List<Expense>>() {
+                });
+                mapper.writerWithDefaultPrettyPrinter().writeValue(dbFile, new ArrayList<Expense>());
+                boolean isRemoved = expensesList.removeIf(expense -> expense.getId() == id);
+                if (isRemoved) {
+                    mapper.writeValue(dbFile, expensesList);
+                    System.out.println("Expense with ID " + id + " was deleted.");
+                } else {
+                    System.out.println("Expense with ID " + id + " not found.");
+                }
+
+            } catch (StreamReadException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (DatabindException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }  
+        return false;
     }
 }

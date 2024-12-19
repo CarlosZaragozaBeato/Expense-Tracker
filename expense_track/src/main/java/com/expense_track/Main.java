@@ -80,31 +80,31 @@ public class Main {
                         //
                         Pattern patternAmount = Pattern.compile("--amount\\s+(\\d+)");
                         Matcher matcherAmount = patternAmount.matcher(commandsAsString);
-                        
 
                         if (matcherId.find()) {
                             String id = matcherId.group(1); // Extract the id
-                            // You can further validate if necessary, for example, checking if it's within an acceptable range
+                            // You can further validate if necessary, for example, checking if it's within
+                            // an acceptable range
                             try {
                                 int parsedId = Integer.parseInt(id);
 
                                 Expense ex = new Expense(PATH);
                                 ex.getExpenseById(parsedId);
 
-                                if (matcherDescription.find() ) {
+                                if (matcherDescription.find()) {
                                     String newDescription = matcherDescription.group(1);
                                     ex.setDescription(newDescription);
-                                }else{
+                                } else {
                                     System.out.println("DESCRIPTION NOT FINDED");
                                 }
-                                if (matcherAmount.find()){
+                                if (matcherAmount.find()) {
                                     String newAmount = matcherAmount.group(1);
                                     try {
-                                        ex.setAmount(Integer.parseInt(newAmount));                                        
+                                        ex.setAmount(Integer.parseInt(newAmount));
                                     } catch (Exception e) {
-                                        System.err.println("not a number exception: " +e);
+                                        System.err.println("not a number exception: " + e);
                                     }
-                                }else{
+                                } else {
                                     System.out.println("AMOUNT NOT FINDED");
                                 }
                                 System.out.println(ex);
@@ -116,15 +116,30 @@ public class Main {
                         } else {
                             System.out.println("Invalid ID: No numeric ID found.");
                         }
-                    }else if (command[0].trim().equals("delete")){
+                    } else if (command[0].trim().equals("delete")) {
+                        String commandsAsString = String.join(" ", command);
 
-                    }else if (command[0].trim().equals("summary")){
-                        
+                        Pattern patternId = Pattern.compile("--id\\s+(\\d+)");
+                        Matcher matcherId = patternId.matcher(commandsAsString);
+                        if (matcherId.find()) {
+                            String id = matcherId.group(1); // Extract the id
+                            // You can further validate if necessary, for example, checking if it's within
+                            // an acceptable range
+                            try {
+                                int parsedId = Integer.parseInt(id);
+                                Expense.deleteById(PATH, parsedId);
+                            } catch (Exception e) {
+                                System.err.println(e);
+                            }
+
+                        } else if (command[0].trim().equals("summary")) {
+
+                        }
                     }
                 }
+                flag = false;
             }
-            flag = false;
+            sc.close();
         }
-        sc.close();
     }
 }
