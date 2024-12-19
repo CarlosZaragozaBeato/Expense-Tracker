@@ -4,14 +4,19 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
+        final String PATH = "/home/carlos/Desktop/expense_tracker/expense_track/src/main/resources/db/db.json";
+        
         // Users can add an expense with a description and amount.
         final String TEXT = "ENTER A COMMAND: \n-add:\nupdate-\ndelete\n-list\n-summary\n-summary(month)\n";
         boolean flag = true;
         Scanner sc = new Scanner(System.in);
+
+        // Get the last ID from the JSON file or initialize to 0 if the file doesn't exist
+        int currentID = Expense.getLastId(PATH);
+
         while (flag) {
             System.out.println(TEXT);
             String[] command = sc.nextLine().split(" ");
@@ -20,13 +25,13 @@ public class Main {
                 if (command[0].trim().equals("exit")) {
                     flag = false;
                 } else {
-
                     if (command[0].trim().equals("add")) {
                         System.out.println("\n---ADD");
                         if (Arrays.asList(command).contains("--description")
                                 && Arrays.asList(command).contains("--amount")) {
                             String commandsAsString = String.join(" ", command);
 
+                            // Regular expressions to extract description and amount
                             Pattern patternDescription = Pattern.compile("--description\\s+\"(.*?)\"");
                             Matcher matcherDescription = patternDescription.matcher(commandsAsString);
                             Pattern patternAmount = Pattern.compile("--amount\\s+\"(.*?)\"");
@@ -40,14 +45,14 @@ public class Main {
                                 }catch(Exception e){
                                     System.out.println("PLEASE ENTER A VALID amount");
                                 }
-                                if (amount >= 0){
-                                    
+                                if (amount >= 0) {
+                                    Expense ex = new Expense(description, amount, PATH);
+                                    currentID = ex.saveExpense(currentID);
+                                    System.out.println("EXPENSE: " + ex);
                                 }
-
                             } else {
-                                System.out.println("No description or ammount found.");
+                                System.out.println("No description or amount found.");
                             }
-
                         } else {
                             System.out.println("PLEASE INSERT ALL THE VALUES");
                         }
@@ -55,7 +60,6 @@ public class Main {
                 }
             }
             flag = false;
-            // add --description "DESCRIPTION" --amount "2"
         }
         sc.close();
     }
