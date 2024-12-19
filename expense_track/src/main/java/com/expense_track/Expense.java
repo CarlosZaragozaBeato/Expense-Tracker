@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
@@ -106,8 +107,6 @@ public class Expense {
         return currentId;
     }
 
-
-
     public static List<Expense> getListBd(String path) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule()); // Register the module for Java 8 date/time types
@@ -185,9 +184,9 @@ public class Expense {
             System.err.println(e.getMessage());
         }
 
-        if (!expensesList.isEmpty()){
-            for (Expense ex: expensesList){
-                if (ex.getId() == parsedId){
+        if (!expensesList.isEmpty()) {
+            for (Expense ex : expensesList) {
+                if (ex.getId() == parsedId) {
                     this.setAmount(ex.getAmount());
                     this.setDate(ex.getDate());
                     this.setId(ex.getId());
@@ -197,6 +196,7 @@ public class Expense {
             }
         }
     }
+
     public void updateExpense() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule()); // Register the module for Java 8 date/time types
@@ -204,7 +204,7 @@ public class Expense {
         List<Expense> expensesList = new ArrayList<>();
 
         File dbFile = new File(path);
-        
+
         try {
             // Read the file and map it to a list of expenses
             if (dbFile.exists()) {
@@ -217,9 +217,9 @@ public class Expense {
             System.err.println(e.getMessage());
         }
 
-        if (!expensesList.isEmpty()){
-            for (Expense ex: expensesList){
-                if (ex.getId() == this.getId()){
+        if (!expensesList.isEmpty()) {
+            for (Expense ex : expensesList) {
+                if (ex.getId() == this.getId()) {
                     ex.setAmount(this.getAmount());
                     ex.setDate(this.getDate());
                     ex.setId(this.getId());
@@ -245,9 +245,9 @@ public class Expense {
         mapper.registerModule(new JavaTimeModule()); // Register the module for Java 8 date/time types
 
         List<Expense> expensesList = new ArrayList<>();
-        
+
         File dbFile = new File(path);
-        
+
         if (dbFile.exists()) {
             // Deserialize the file content into a list of Expense objects
             try {
@@ -272,7 +272,78 @@ public class Expense {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        }  
+        }
         return false;
+    }
+
+    public static int getTotalByMonth(String month, String path) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule()); // Register the module for Java 8 date/time types
+        int total = 0;
+
+        List<Expense> expensesList = new ArrayList<>();
+
+        File dbFile = new File(path);
+
+        if (dbFile.exists()) {
+            try {
+                expensesList = mapper.readValue(dbFile, new TypeReference<List<Expense>>() {
+                }).stream()
+                        .filter(expense -> expense.getDate() != null
+                                && expense.getDate().getMonthValue() == Integer.parseInt(month))
+                        .collect(Collectors.toList());
+                ;
+
+                if (!expensesList.isEmpty()) {
+                    for (Expense ex : expensesList) {
+                        total += ex.getAmount();
+                    }
+                }
+
+            } catch (StreamReadException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (DatabindException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return total;
+    }
+
+    public static int getTotal(String path) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule()); // Register the module for Java 8 date/time types
+        int total = 0;
+
+        List<Expense> expensesList = new ArrayList<>();
+
+        File dbFile = new File(path);
+
+        if (dbFile.exists()) {
+            // Deserialize the file content into a list of Expense objects
+            try {
+                expensesList = mapper.readValue(dbFile, new TypeReference<List<Expense>>() {
+                });
+                if (!expensesList.isEmpty()) {
+                    for (Expense ex : expensesList) {
+                        total += ex.getAmount();
+                    }
+                }
+            } catch (StreamReadException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (DatabindException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return total;
     }
 }

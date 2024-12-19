@@ -132,9 +132,18 @@ public class Main {
                                 System.err.println(e);
                             }
 
-                        } else if (command[0].trim().equals("summary")) {
-
                         }
+                    } else if (command[0].trim().equals("summary")) {
+                        String commandsAsString = String.join(" ", command);
+
+                        Pattern patternMonth = Pattern.compile("--month\\s+(\\d+)");
+                        Matcher matcherMonth = patternMonth.matcher(commandsAsString);
+                        if (matcherMonth.find()){
+                            int total = Expense.getTotalByMonth(matcherMonth.group(1), PATH);
+                        }else{
+                            int total = Expense.getTotal(PATH);
+                        }
+
                     }
                 }
                 flag = false;
